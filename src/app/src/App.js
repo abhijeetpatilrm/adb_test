@@ -1,27 +1,24 @@
-import './App.css';
-import logo from './logo.svg';
+import React from "react";
+import "./App.css";
+import useTodos from "./hooks/useTodos";
+import TodoList from "./components/TodoList";
+import TodoForm from "./components/TodoForm";
+import ErrorMessage from "./components/ErrorMessage";
 
+function App() {
+  // Custom hook manages all todo state and logic
+  const { todos, loading, error, addTodo, deleteTodo, clearError } = useTodos();
 
-export function App() {
   return (
     <div className="App">
-      <div>
-        <h1>List of TODOs</h1>
-        <li>Learn Docker</li>
-        <li>Learn React</li>
-      </div>
-      <div>
-        <h1>Create a ToDo</h1>
-        <form>
-          <div>
-            <label for="todo">ToDo: </label>
-            <input type="text" />
-          </div>
-          <div style={{"marginTop": "5px"}}>
-            <button>Add ToDo!</button>
-          </div>
-        </form>
-      </div>
+      {/* Error notification banner */}
+      <ErrorMessage message={error} onDismiss={clearError} />
+
+      {/* Display todos */}
+      <TodoList todos={todos} loading={loading} onDelete={deleteTodo} />
+
+      {/* Create new todo */}
+      <TodoForm onSubmit={addTodo} disabled={loading} />
     </div>
   );
 }

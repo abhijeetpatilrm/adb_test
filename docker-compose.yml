@@ -1,4 +1,5 @@
-version: '2'
+version: "2"
+
 services:
   api:
     build: .
@@ -11,24 +12,34 @@ services:
     volumes:
       - ${ADBREW_CODEBASE_PATH}/tmp:/tmp
       - ${ADBREW_CODEBASE_PATH}:/src
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
 
   app:
-    build: .
+    image: node:16
     container_name: app
-    command: bash -c "cd /src/app && yarn install && yarn start"
+    working_dir: /src/app
+    command: bash -c "npm install --legacy-peer-deps && npm start"
     ports:
       - "3000:3000"
     volumes:
       - ${ADBREW_CODEBASE_PATH}:/src
+    environment:
+      - CI=false
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
 
   mongo:
-    build: .
+    image: mongo:4.4
     container_name: mongo
     restart: always
     ports:
       - "27017:27017"
     volumes:
-      - ${ADBREW_CODEBASE_PATH}/db/:/data/db
-    command: /usr/bin/mongod --bind_ip 0.0.0.0
-
-    
+      - ${ADBREW_CODEBASE_PATH}/db:/data/db
+    command: ["mongod", "--bind_ip_all"]
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
